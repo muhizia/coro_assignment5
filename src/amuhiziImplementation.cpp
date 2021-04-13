@@ -1962,3 +1962,7 @@ void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green,
         printf("RGB( %d, %d, %d ) \n", (int) color[2], (int) color[1], (int) color[0]);
     }
 }
+bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
+{
+    return (pv1.hue < pv2.hue);
+}
