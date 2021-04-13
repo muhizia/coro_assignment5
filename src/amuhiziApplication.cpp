@@ -299,9 +299,23 @@ int main(int argc, char ** argv) {
       hueMagnitude(&hue);
       pic_vals.push_back({centers.at(index).x, centers.at(index).y, theta, hue});
    }
+
+    /* get the object pose data */
+    /* ------------------------ */
+    const int NUM_BRICKS = 3;           // we have 3 bricks. this parameter should perhaps be read from the input file?
+                                        // name and colors arrays should be of size NUM_BRICKS
+
+   float bricks_pose[NUM_BRICKS][4];   // read and store the bricks poses in an array
+
+
+
    sort(pic_vals.begin(), pic_vals.end(), smallHue);
    for (auto pic : pic_vals){
-      printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
+      if (debug) printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
+      bricks_pose[i][0] = pic.x;
+      bricks_pose[i][1] = pic.y;
+      bricks_pose[i][2] = 0;
+      bricks_pose[i][3] = pic.theta;
    }
    printf("\n");
    pic_vals.clear();
@@ -316,7 +330,23 @@ int main(int argc, char ** argv) {
 
    /* insert your code here */
 
+ 
+    /* get the destination pose data */
+    /* ----------------------------- */
+
+    
+    if (debug) printf("Destination pose %f %f %f %f\n", destination_x, destination_y, destination_z, destination_phi);
    
+    float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
+    for (int i = 0; i < NUM_BRICKS; i++)
+        bricks_dest_z[i] = destination_z + i*11.4; // all bricks have a height of 11.4 mm
    
+   /* Call the utility function to pick and place the spawned bricks */
+    for (int i = 0; i < NUM_BRICKS; i++) {
+        pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3],
+                       destination_x, destination_y, bricks_dest_z[i], destination_phi,
+                       grasp_x, grasp_y, grasp_z, grasp_theta);
+    }
+    
    return 0;
 }
