@@ -81,7 +81,6 @@ int main(int argc, char ** argv) {
 
    Mat frame;
 
-   cv::Mat src;
    cv::Mat src_bgr;
    cv::Mat srcGray;
 
@@ -285,8 +284,8 @@ int main(int argc, char ** argv) {
    /* insert your code here */
 
    std::vector<PIC_VALUES> pic_vals;
-   src = cv::imread(path + endString.at(0));
-   src_bgr = cv::imread(path + endString.at(0));
+   src = frame; // cv::imread(path + endString.at(0));
+   src_bgr = frame; // cv::imread(path + endString.at(0));
    ContourExtraction(src, &contours, 150);
    getCenter(&src, contours, &centers, &arcLine_points);
    
