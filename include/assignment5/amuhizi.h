@@ -328,7 +328,9 @@ void drawCrossHairs(Mat hough, int x, int y, int size, int r, int g, int b, int 
 void drawArrowedLine(Mat hough, int i, int j, float magnitude_value, float phase_value, int red, int green, int blue, int weight);
 float lineLength(Point2f p1, Point2f p2);
 void inversePerspectiveTransformation(Point2f image_sample_point, float camera_model[][4], float z, Point3f *world_sample_point);
-
+void pick_and_place(float object_x, float object_y, float object_z, float object_phi,
+                    float destination_x, float destination_y, float destination_z, float destination_phi,
+                    float grasp_x, float grasp_y, float grasp_z, float grasp_theta);
 
 void getAngle(cv::Point point, cv::Point center, int *thetha);
 void radToDeg(float rad, float *deg);

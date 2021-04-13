@@ -1966,3 +1966,214 @@ bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
 {
     return (pv1.hue < pv2.hue);
 }
+
+void pick_and_place(float object_x, float object_y, float object_z, float object_phi, 
+                    float destination_x, float destination_y, float destination_z, float destination_phi,
+                    float grasp_x, float grasp_y, float grasp_z, float grasp_theta) {
+    /* now start the pick and place task */
+    /* --------------------------------- */
+
+    float effector_length = (float) robotConfigurationData.effector_z; // initialized from robot configuration data
+    float initial_approach_distance = 20;
+    float final_depart_distance     = 20;
+    float delta = 2;
+
+    float approach_distance;
+    float depart_distance;
+  
+    Frame E               = trans(0.0, 0.0, effector_length);                                           // end-effector (gripper) frame 
+    Frame Z               = trans(0.0 ,0.0, 0.0);                                                       // robot base frame
+    Frame object          = trans(object_x,      object_y,      object_z)      * rotz(object_phi);      // object pose
+    Frame destination     = trans(destination_x, destination_y, destination_z) * rotz(destination_phi); // destination pose
+    Frame object_grasp    = trans(grasp_x,       grasp_y,       grasp_z)       * roty(grasp_theta);     // object grasp frame w.r.t. both object and destination frames
+    Frame object_approach = trans(0,0,-initial_approach_distance);                                      // frame defined w.r.t. grasp frame
+    Frame object_depart   = trans(0,0,-final_depart_distance);                                          // frame defined w.r.t. grasp frame
+ 
+    bool debug = true;
+    bool continuous_path = true;
+
+    /* open the gripper */
+    /* ----------------- */
+
+    if (debug) printf("Opening gripper\n");
+   
+    grasp(GRIPPER_OPEN);
+
+#ifdef ROS
+    wait(5000); // wait to allow the simulator to go to the home pose before beginning
+                // we need to do this because the simulator does not initialize in the home pose
+#endif
+
+   
+    /* move to the pick approach pose */
+    /* ------------------------------ */
+   
+    if (debug) printf("Moving to object approach pose\n");
+
+    Frame T6 = inv(Z) * object * object_grasp * object_approach * inv(E);
+
+    if (move(T6) == false) display_error_and_exit("move error ... quitting\n");;
+
+    wait(2000); 
+
+
+    if (continuous_path) {
+        
+        /* incrementally decrease the approach distance */
+     
+        approach_distance = initial_approach_distance - delta;
+   
+        while (approach_distance >= 0) {
+            
+            object_approach = trans(0,0,-approach_distance);
+	 
+            T6 = inv(Z) * object * object_grasp * object_approach * inv(E);
+	 
+            if (move(T6) == false) display_error_and_exit("move error ... quitting\n");  
+
+            approach_distance = approach_distance - delta;                              
+        }
+    }
+
+   
+    /* move to the pick pose */
+    /* --------------------- */
+      
+    if (debug) printf("Moving to object pose\n");
+
+    T6 = inv(Z) * object * object_grasp * inv(E);
+
+    if (move(T6) == false) display_error_and_exit("move error ... quitting\n");
+
+    wait(1000); 
+
+   
+    /* close the gripper */
+    /* ----------------- */
+
+    if (debug) printf("Closing gripper\n");
+    
+    grasp(GRIPPER_CLOSED);
+
+    wait(1000);
+
+           
+    /* move to pick depart pose */
+    /* ------------------------ */
+
+    if (debug) printf("Moving to object depart pose\n");
+
+    if (continuous_path) {
+        
+        /* incrementally increase depart distance */
+
+        depart_distance = delta;
+      
+        while (depart_distance <= final_depart_distance) {
+            
+            object_depart   = trans(0,0,-depart_distance);
+
+            T6 = inv(Z) * object * object_grasp * object_depart * inv(E);          
+                                                                              
+            if (move(T6) == false) display_error_and_exit("move error ... quitting\n"); 
+            
+            depart_distance = depart_distance + delta;
+        }
+    }
+
+   
+    T6 = inv(Z) * object * object_grasp * object_depart * inv(E);
+
+    if (move(T6) == false) display_error_and_exit("move error ... quitting\n");;
+
+    wait(2000);
+
+   
+    /* move to destination approach pose */
+    /* --------------------------------- */
+
+    if (debug) printf("Moving to destination approach pose\n");
+
+    object_approach = trans(0,0,-initial_approach_distance);
+ 
+    T6 = inv(Z) * destination * object_grasp * object_approach * inv(E);
+
+    if (move(T6) == false) display_error_and_exit("move error ... quitting\n");
+
+    wait(2000);
+
+      
+    /* move to the destination pose */
+    /* ---------------------------- */
+
+    if (debug) printf("Moving to destination pose\n");
+      
+    if (continuous_path) {
+        
+        /* incrementally decrease approach distance */
+
+        approach_distance = initial_approach_distance - delta;
+   
+        while (approach_distance >= 0) {
+            
+            object_approach   = trans(0,0,-approach_distance);
+	
+            T6 = inv(Z) * destination * object_grasp * object_approach * inv(E);   
+                                                                                  
+            if (move(T6) == false) display_error_and_exit("move error ... quitting\n");  
+
+            approach_distance = approach_distance - delta;
+        }
+    }
+
+
+    T6 = inv(Z) * destination * object_grasp * inv(E);
+
+    if (move(T6) == false) display_error_and_exit("move error ... quitting\n");;
+ 
+    wait(1000);
+
+   
+    /* open the gripper */
+    /* ---------------- */
+
+    if (debug) printf("Opening gripper\n");
+
+    grasp(GRIPPER_OPEN);     
+    wait(1000); 
+
+   
+    /* move to depart pose */
+    /* ------------------- */
+
+    if (debug) printf("Moving to destination depart pose\n");
+
+    if (continuous_path) {
+        
+        depart_distance = delta;
+        
+        while (depart_distance <= final_depart_distance) {
+            
+            object_depart   = trans(0,0,-depart_distance);
+
+            T6 = inv(Z) * destination * object_grasp * object_depart * inv(E);          
+                                                                              
+            if (move(T6) == false) display_error_and_exit("move error ... quitting\n"); 
+            
+            depart_distance = depart_distance + delta;
+        }
+    }
+   
+    object_depart   = trans(0,0,-final_depart_distance);
+      
+    T6 = inv(Z) * destination * object_grasp * object_depart * inv(E);
+
+    if (move(T6) == false) display_error_and_exit("move error ... quitting\n");
+
+    wait(1000);
+
+    
+    goHome(); // this returns the robot to the home position so that when it's switched off 
+              // it's in a pose that is close to the one that the servo-controller uses as its initial state
+              // could also do this with a move() as show above
+}

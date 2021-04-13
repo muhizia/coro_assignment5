@@ -345,8 +345,8 @@ int main(int argc, char ** argv) {
     for (int i = 0; i < NUM_BRICKS; i++) {
         pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3],
                        destination_x, destination_y, bricks_dest_z[i], destination_phi,
-                       grasp_x, grasp_y, grasp_z, grasp_theta);
+                       0, 0, 5, 180);
     }
-    
+
    return 0;
 }
