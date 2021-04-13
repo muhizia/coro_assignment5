@@ -112,6 +112,11 @@ typedef char keyword[KEY_LENGTH];
 #define MIN_Z    0
 #define MAX_Z  380
 
+struct PIC_VALUES
+{
+    int x , y, theta;
+    float hue;
+};
 // comment out because it conflicts with OpenCV
 //#define MAX(x, y) (((x) > (y)) ? (x) : (y))
 //#define MIN(x, y) (((x) < (y)) ? (x) : (y))
