@@ -80,7 +80,7 @@ int main(int argc, char ** argv) {
    /* image */
 
    Mat frame;
-
+   cv::Mat src;
    cv::Mat src_bgr;
    cv::Mat srcGray;
 
@@ -88,7 +88,6 @@ int main(int argc, char ** argv) {
    int theta = 0;
    std::vector<cv::Point> centers;
    std::vector<cv::Point> arcLine_points;
-   int j = 0;
    unsigned char red, green, blue;
    float hue, saturation, intensity;
 
@@ -290,15 +289,15 @@ int main(int argc, char ** argv) {
    getCenter(&src, contours, &centers, &arcLine_points);
    
    if (debug) printf("Number of contours %lu: \n", contours.size());
-   for(int i = 0; i < centers.size(); i++)
+   for(int index = 0; index < centers.size(); index++)
    {
-      getAngle(arcLine_points.at(i), centers.at(i), &theta);
-      drawCrossHairs(src, centers.at(i).x, centers.at(i).y, 10, 255, 255, 0, 1);
-      drawArrowedLine(src, centers.at(i).x, centers.at(i).y, 90, - degToRad(theta), 255, 255, 0, 1);
-      getRGB(src_bgr, centers.at(i).x, centers.at(i).y, &red, &green, &blue);
+      getAngle(arcLine_points.at(index), centers.at(index), &theta);
+      drawCrossHairs(src, centers.at(index).x, centers.at(index).y, 10, 255, 255, 0, 1);
+      drawArrowedLine(src, centers.at(index).x, centers.at(index).y, 90, - degToRad(theta), 255, 255, 0, 1);
+      getRGB(src_bgr, centers.at(index).x, centers.at(index).y, &red, &green, &blue);
       rgb2hsi(red, green, blue, &hue, &saturation, &intensity);
-      hueMagni(&hue);
-      pic_vals.push_back({centers.at(i).x, centers.at(i).y, theta, hue});
+      hueMagnitude(&hue);
+      pic_vals.push_back({centers.at(index).x, centers.at(index).y, theta, hue});
    }
    sort(pic_vals.begin(), pic_vals.end(), smallHue);
    for (auto pic : pic_vals){

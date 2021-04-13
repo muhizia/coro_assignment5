@@ -323,7 +323,7 @@ int kill_brick(std::string name);
 #define MIN_CONTOUR_AREA     1000
 #define RED_TOLERANCE        20 // hues in the range 180-RED_TOLERANCE are deemed to be red, and are assigned a value of 0
 
-
+void rgb2hsi(unsigned char red, unsigned char green, unsigned char blue, float *hue, float *saturation, float *intensity);
 void drawCrossHairs(Mat hough, int x, int y, int size, int r, int g, int b, int weight);
 void drawArrowedLine(Mat hough, int i, int j, float magnitude_value, float phase_value, int red, int green, int blue, int weight);
 float lineLength(Point2f p1, Point2f p2);
@@ -338,4 +338,4 @@ void distance(int x1, int y1, int x2, int y2, float *distance);
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue);
 void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green, unsigned char *blue);
 bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2);
-void hueMagnitue(float *hue);
+void hueMagnitude(float *hue);
