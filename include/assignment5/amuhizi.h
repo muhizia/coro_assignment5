@@ -323,3 +323,14 @@ void drawCrossHairs(Mat hough, int x, int y, int size, int r, int g, int b, int 
 void drawArrowedLine(Mat hough, int i, int j, float magnitude_value, float phase_value, int red, int green, int blue, int weight);
 float lineLength(Point2f p1, Point2f p2);
 void inversePerspectiveTransformation(Point2f image_sample_point, float camera_model[][4], float z, Point3f *world_sample_point);
+
+
+void getAngle(cv::Point point, cv::Point center, int *thetha);
+void radToDeg(float rad, float *deg);
+float degToRad(int deg);
+void getCenter(cv::Mat *src, std::vector<std::vector<cv::Point>> contours,std::vector<cv::Point> *centers, std::vector<cv::Point> *points_on_arcLine);
+void distance(int x1, int y1, int x2, int y2, float *distance);
+void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue);
+void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green, unsigned char *blue);
+bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2);
+void hueMagnitue(float *hue);

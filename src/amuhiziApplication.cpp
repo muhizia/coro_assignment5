@@ -80,7 +80,19 @@ int main(int argc, char ** argv) {
    /* image */
 
    Mat frame;
-   
+
+   cv::Mat src;
+   cv::Mat src_bgr;
+   cv::Mat srcGray;
+
+   std::vector<std::vector<cv::Point>> contours;
+   int theta = 0;
+   std::vector<cv::Point> centers;
+   std::vector<cv::Point> arcLine_points;
+   int j = 0;
+   unsigned char red, green, blue;
+   float hue, saturation, intensity;
+
    /* camera model */
 
    float camera_model[3][4];
@@ -272,7 +284,33 @@ int main(int argc, char ** argv) {
    
    /* insert your code here */
 
-
+   std::vector<PIC_VALUES> pic_vals;
+   src = cv::imread(path + endString.at(0));
+   src_bgr = cv::imread(path + endString.at(0));
+   ContourExtraction(src, &contours, 150);
+   getCenter(&src, contours, &centers, &arcLine_points);
+   
+   if (debug) printf("Number of contours %lu: \n", contours.size());
+   for(int i = 0; i < centers.size(); i++)
+   {
+      getAngle(arcLine_points.at(i), centers.at(i), &theta);
+      drawCrossHairs(src, centers.at(i).x, centers.at(i).y, 10, 255, 255, 0, 1);
+      drawArrowedLine(src, centers.at(i).x, centers.at(i).y, 90, - degToRad(theta), 255, 255, 0, 1);
+      getRGB(src_bgr, centers.at(i).x, centers.at(i).y, &red, &green, &blue);
+      rgb2hsi(red, green, blue, &hue, &saturation, &intensity);
+      hueMagni(&hue);
+      pic_vals.push_back({centers.at(i).x, centers.at(i).y, theta, hue});
+   }
+   sort(pic_vals.begin(), pic_vals.end(), smallHue);
+   for (auto pic : pic_vals){
+      printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
+   }
+   printf("\n");
+   pic_vals.clear();
+   imshow( "Src", src);
+   if(centers.size() != 0) centers.clear();
+   if(arcLine_points.size() != 0) arcLine_points.clear();
+   cv::waitKey(0);
    
    /* stack the bricks: red on top, green in the middle, and blue at the bottom  */
    /* -------------------------------------------------------------------------  */
