@@ -20,9 +20,9 @@
  *******************************************************************************************************************/
 
 #ifdef WIN32
-#include "dvernon.h"
+#include "amuhizi.h"
 #else
-#include <assignment5/dvernon.h>
+#include <assignment5/amuhizi.h>
 #endif
 
 
@@ -708,7 +708,7 @@ bool computeJointAngles(double x, double y, double z, double pitch_angle_d, doub
 	/* 24 April 2018                                                                                                                       */
                                
 	/* Note that this is necessary because the kinematic specification given in M. A. Qassem, I. Abuhadrous, and H. Elaydi,                */
-	/* “Modeling and Simulation of 5 DOF educational robot arm”, 2nd International Conference on Advanced Computer Control (ICACC), 2010.  */
+	/* ï¿½Modeling and Simulation of 5 DOF educational robot armï¿½, 2nd International Conference on Advanced Computer Control (ICACC), 2010.  */
 	/* has the T5 axes aligned in different directions to the base frame                                                                   */
     /* David Vernon                                                                                                                        */
 	/* 25 June 2020                                                                                                                        */         
@@ -1163,7 +1163,7 @@ bool getJointPositions(float x, float y, float z, float pitch_angle_d, float rol
 	/* 24 April 2018                                                                                                                       */
                                
 	/* Note that this is necessary because the kinematic specification given in M. A. Qassem, I. Abuhadrous, and H. Elaydi,                */
-	/* “Modeling and Simulation of 5 DOF educational robot arm”, 2nd International Conference on Advanced Computer Control (ICACC), 2010.  */
+	/* ï¿½Modeling and Simulation of 5 DOF educational robot armï¿½, 2nd International Conference on Advanced Computer Control (ICACC), 2010.  */
 	/* has the T5 axes aligned in different directions to the base frame                                                                   */
     /* David Vernon                                                                                                                        */
 	/* 25 June 2020                                                                                                                        */         
