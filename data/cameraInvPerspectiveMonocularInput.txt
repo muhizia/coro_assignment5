@@ -1,2 +1,0 @@
-cameraModelCoefficients.txt
-Media/camera_image.png

@@ -1,3 +1,0 @@
-Media/RGBimage.jpg
-Media/testvideo.avi
-0
