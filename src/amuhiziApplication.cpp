@@ -310,6 +310,7 @@ int main(int argc, char ** argv) {
 
 
    sort(pic_vals.begin(), pic_vals.end(), smallHue);
+   int k = 0;
    for (auto pic : pic_vals){
       if (debug) printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
       bricks_pose[i][0] = pic.x;
@@ -317,6 +318,7 @@ int main(int argc, char ** argv) {
       bricks_pose[i][2] = 0;
       bricks_pose[i][3] = pic.theta;
       printf("location %d = %f %f %f %f\n", i+1, bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3]);
+      k = k + 1;
    }
    printf("\n");
    pic_vals.clear();
