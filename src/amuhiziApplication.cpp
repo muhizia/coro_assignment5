@@ -311,14 +311,17 @@ int main(int argc, char ** argv) {
 
    sort(pic_vals.begin(), pic_vals.end(), smallHue);
    int k = 0;
+   cv::Point3f world_sample_point;
    for (auto pic : pic_vals){
       if (debug) printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
-      bricks_pose[k][0] = pic.x;
-      bricks_pose[k][1] = pic.y;
+      inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
+      bricks_pose[k][0] = world_sample_point.x;
+      bricks_pose[k][1] = world_sample_point.y;
       bricks_pose[k][2] = 0;
       bricks_pose[k][3] = pic.theta;
       printf("location %d = %f %f %f %f\n", k+1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
       k = k + 1;
+      
    }
    printf("\n");
    pic_vals.clear();
