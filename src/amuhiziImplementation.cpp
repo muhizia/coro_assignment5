@@ -1806,7 +1806,49 @@ void rgb2hsi(unsigned char red, unsigned char green, unsigned char blue, float *
  * This function is the edited version taken from the notes Introduction Cognitive Robotics Prof. David Vernon.
  * 
 */
+void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours) {
+   cv::Mat src_gray, src_blur, detected_edges;
+   int cannyThreshold = 10;
+   char* canny_window_name;
+   char* contour_window_name;
+   int gaussian_std_dev = 3;
 
+   bool debug = true;
+   int ratio = 5;
+   int kernel_size = 3;
+   int filter_size;
+//   std::vector <std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+   cv::Mat thresholdedImage;
+
+   filter_size = gaussian_std_dev * 4 + 1;  // multiplier must be even to ensure an odd filter size as required by OpenCV
+                                            // this places an upper limit on gaussian_std_dev of 7 to ensure the filter size < 31
+                                            // which is the maximum size for the Laplacian operator
+    cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
+
+   GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), gaussian_std_dev);
+
+   Canny( src_blur, detected_edges, cannyThreshold, cannyThreshold*ratio, kernel_size );
+
+    cv::Mat canny_edge_image_copy = detected_edges.clone();   // clone the edge image because findContours overwrites it
+
+   /* see http://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html#findcontours */
+   /* and http://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html         */
+    findContours(canny_edge_image_copy,*contours,hierarchy,cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);       // draw the contours on a black background
+ 
+    for (int contour_number=0; (contour_number<(int)contours->size()); contour_number++) {
+        cv::Scalar colour( rand()&0xFF, rand()&0xFF, rand()&0xFF );  // use a random colour for each contour
+      drawContours( contours_image, *contours, contour_number, colour, 1, 8, hierarchy );
+    }
+
+//   if (debug) printf("Number of contours %d: \n", contours.size());
+
+   imshow( "canny_window_name", detected_edges );
+   imshow( "contour_window_name", contours_image );
+    cv::waitKey(0);
+}
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)
 {
     cv::Mat src_gray;
