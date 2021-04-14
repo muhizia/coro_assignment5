@@ -2009,6 +2009,7 @@ bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
     return (pv1.hue < pv2.hue);
 }
 
+
 void pick_and_place(float object_x, float object_y, float object_z, float object_phi, 
                     float destination_x, float destination_y, float destination_z, float destination_phi,
                     float grasp_x, float grasp_y, float grasp_z, float grasp_theta) {
