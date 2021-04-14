@@ -317,7 +317,7 @@ int main(int argc, char ** argv) {
       inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
       bricks_pose[k][0] = world_sample_point.x;
       bricks_pose[k][1] = world_sample_point.y;
-      bricks_pose[k][2] = 0;
+      bricks_pose[k][2] = 11.4;
       bricks_pose[k][3] = pic.theta;
       printf("location %d = %f %f %f %f\n", k+1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
       k = k + 1;
