@@ -1880,9 +1880,9 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
     cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);
     if(debug)
     {
-        imshow("Gray", src_gray);
-        imshow("Image brur", src_blur);
-        imshow("Image detected_edges", detected_edges);
+      //   imshow("Gray", src_gray);
+      //   imshow("Image brur", src_blur);
+      //   imshow("Image detected_edges", detected_edges);
     }
 }
 

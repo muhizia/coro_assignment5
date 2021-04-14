@@ -325,10 +325,10 @@ int main(int argc, char ** argv) {
    }
    printf("\n");
    pic_vals.clear();
-   imshow( "Src", src);
+   // imshow( "Src", src);
    if(centers.size() != 0) centers.clear();
    if(arcLine_points.size() != 0) arcLine_points.clear();
-   cv::waitKey(0);
+   // cv::waitKey(0);
    
    /* stack the bricks: red on top, green in the middle, and blue at the bottom  */
    /* -------------------------------------------------------------------------  */
