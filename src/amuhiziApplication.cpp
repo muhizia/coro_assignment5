@@ -313,11 +313,11 @@ int main(int argc, char ** argv) {
    int k = 0;
    for (auto pic : pic_vals){
       if (debug) printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
-      bricks_pose[i][0] = pic.x;
-      bricks_pose[i][1] = pic.y;
-      bricks_pose[i][2] = 0;
-      bricks_pose[i][3] = pic.theta;
-      printf("location %d = %f %f %f %f\n", i+1, bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3]);
+      bricks_pose[k][0] = pic.x;
+      bricks_pose[k][1] = pic.y;
+      bricks_pose[k][2] = 0;
+      bricks_pose[k][3] = pic.theta;
+      printf("location %d = %f %f %f %f\n", k+1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
       k = k + 1;
    }
    printf("\n");
