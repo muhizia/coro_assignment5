@@ -341,4 +341,4 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue);
 void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green, unsigned char *blue);
 bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2);
-void hueMagnitude(float *hue);
+void hueCorrespColor(float hue, std::string *color);
