@@ -1989,9 +1989,15 @@ void getAngle(cv::Point point, cv::Point center, int *thetha)
     rad = abs(atan2(deltaY, deltaX));
     radToDeg(rad, thetha);
 }
-void hueMagnitude(float *hue)
+void hueCorrespColor(float hue, std::string *color)
 {
-    if(*hue > 180) *hue = 360 - *hue;
+    // 255 - 10
+    // 225 - 255
+    // 81 - 140
+    if((hue >= 255 && hue <= 360) || (hue <= 10)) *color = "red";
+    else if(hue >= 225 && hue < 255) *color = "blue";
+    else if(hue >= 81 && hue < 140) *color = "green";
+    else *color = "other";
 }
 void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green, unsigned char *blue) {
     bool debug = true;
@@ -2006,7 +2012,14 @@ void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green,
 }
 bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
 {
-    return (pv1.hue < pv2.hue);
+    if(pv1.color == "red" && pv2.color == "green")
+        return true;
+    else if(pv1.color == "red" && pv2.color == "blue")
+        return true;
+    else if(pv1.color == "green" && pv2.color == "blue")
+        return true;
+    else
+        return  false;
 }
 
 

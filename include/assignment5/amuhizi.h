@@ -115,7 +115,7 @@ typedef char keyword[KEY_LENGTH];
 struct PIC_VALUES
 {
     int x , y, theta;
-    float hue;
+    std::string color;
 };
 // comment out because it conflicts with OpenCV
 //#define MAX(x, y) (((x) > (y)) ? (x) : (y))
