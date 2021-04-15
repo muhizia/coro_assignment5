@@ -297,7 +297,7 @@ int main(int argc, char ** argv) {
       getRGB(src_bgr, centers.at(index).x, centers.at(index).y, &red, &green, &blue);
       rgb2hsi(red, green, blue, &hue, &saturation, &intensity);
       hueCorrespColor(hue, &color);
-      pic_vals.push_back({centers.at(index).x, centers.at(index).y, theta, hue});
+      pic_vals.push_back({centers.at(index).x, centers.at(index).y, theta, color});
    }
 
     /* get the object pose data */
@@ -313,7 +313,7 @@ int main(int argc, char ** argv) {
    int k = 0;
    cv::Point3f world_sample_point;
    for (auto pic : pic_vals){
-      if (debug) printf("( %3d, %3d, %3d, %3f)", pic.x, pic.y, pic.theta, pic.hue);
+      if (debug) printf("( %3d, %3d, %3d)", pic.x, pic.y, pic.theta);
       inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
       bricks_pose[k][0] = world_sample_point.x;
       bricks_pose[k][1] = world_sample_point.y;
