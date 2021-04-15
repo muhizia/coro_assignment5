@@ -1841,7 +1841,7 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
  
     for (int contour_number=0; (contour_number<(int)contours->size()); contour_number++) {
         cv::Scalar colour( rand()&0xFF, rand()&0xFF, rand()&0xFF );  // use a random colour for each contour
-      drawContours( contours_image, *contours, contour_number, colour, 1, 8, hierarchy );
+        drawContours( contours_image, *contours, contour_number, colour, 1, 8, hierarchy );
     }
 
 //   if (debug) printf("Number of contours %d: \n", contours.size());
