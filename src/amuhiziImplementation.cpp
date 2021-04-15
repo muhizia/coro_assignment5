@@ -1834,7 +1834,7 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    inRange(src_hue, cv::Scalar(0, 228, 199), cv::Scalar(156, 239, 255), src_threshold);
    /* see http://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html#findcontours */
    /* and http://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html         */
-    findContours(src_threshold,*contours,hierarchy,cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+    findContours(src_threshold,*contours,hierarchy,CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
     cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);       // draw the contours on a black background
  
@@ -1845,8 +1845,8 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
 
 //   if (debug) printf("Number of contours %d: \n", contours.size());
 
-   // imshow( "canny_window_name", detected_edges );
-   // imshow( "contour_window_name", contours_image );
+   imshow( "canny_window_name", src_threshold);
+   imshow( "contour_window_name", contours_image );
    //  cv::waitKey(0);
 }
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)

@@ -317,7 +317,7 @@ int main(int argc, char ** argv) {
       inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
       bricks_pose[k][0] = world_sample_point.x;
       bricks_pose[k][1] = world_sample_point.y;
-      bricks_pose[k][2] = 0;
+      bricks_pose[k][2] = world_sample_point.z;
       bricks_pose[k][3] = pic.theta;
       printf("location %d = %f %f %f %f\n", k+1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
       k = k + 1;
@@ -349,9 +349,7 @@ int main(int argc, char ** argv) {
     }
    /* Call the utility function to pick and place the spawned bricks */
     for (int i = 0; i < NUM_BRICKS; i++) {
-        pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3],
-                       destination_x, destination_y, bricks_dest_z[i], destination_phi,
-                       0, 0, 5, 180);
+      //   pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
     }
 
    return 0;
