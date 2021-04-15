@@ -1807,7 +1807,7 @@ void rgb2hsi(unsigned char red, unsigned char green, unsigned char blue, float *
  * 
 */
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours) {
-   cv::Mat src_gray, src_blur, detected_edges, src_threshold;
+   cv::Mat src_hue, src_blur, detected_edges, src_threshold;
    int cannyThreshold = 10;
    char* canny_window_name;
    char* contour_window_name;
