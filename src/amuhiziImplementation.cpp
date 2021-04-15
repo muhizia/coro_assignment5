@@ -1807,7 +1807,7 @@ void rgb2hsi(unsigned char red, unsigned char green, unsigned char blue, float *
  * 
 */
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours) {
-   cv::Mat src_gray, src_blur, detected_edges;
+   cv::Mat src_gray, src_blur, detected_edges, src_threshold;
    int cannyThreshold = 10;
    char* canny_window_name;
    char* contour_window_name;
@@ -1824,17 +1824,17 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    filter_size = gaussian_std_dev * 4 + 1;  // multiplier must be even to ensure an odd filter size as required by OpenCV
                                             // this places an upper limit on gaussian_std_dev of 7 to ensure the filter size < 31
                                             // which is the maximum size for the Laplacian operator
-    cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
+   cvtColor(src, src_hue, cv::COLOR_BGR2HSV);
 
-   GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), gaussian_std_dev);
+   // GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), gaussian_std_dev);
 
-   Canny( src_blur, detected_edges, cannyThreshold, cannyThreshold*ratio, kernel_size );
+   // Canny( src_blur, detected_edges, cannyThreshold, cannyThreshold*ratio, kernel_size );
 
-    cv::Mat canny_edge_image_copy = detected_edges.clone();   // clone the edge image because findContours overwrites it
-
+   // cv::Mat canny_edge_image_copy = detected_edges.clone();   // clone the edge image because findContours overwrites it
+   inRange(src_hue, cv::Scalar(0, 228, 199), cv::Scalar(156, 239, 255), src_threshold);
    /* see http://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html#findcontours */
    /* and http://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html         */
-    findContours(canny_edge_image_copy,*contours,hierarchy,cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+    findContours(src_threshold,*contours,hierarchy,cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
     cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);       // draw the contours on a black background
  
@@ -1845,9 +1845,9 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
 
 //   if (debug) printf("Number of contours %d: \n", contours.size());
 
-   imshow( "canny_window_name", detected_edges );
-   imshow( "contour_window_name", contours_image );
-    cv::waitKey(0);
+   // imshow( "canny_window_name", detected_edges );
+   // imshow( "contour_window_name", contours_image );
+   //  cv::waitKey(0);
 }
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)
 {
@@ -1920,7 +1920,7 @@ void getCenter(cv::Mat *src, std::vector<std::vector<cv::Point>> contours,std::v
         approxPolyDP(contours[contour_number], conPoints[contour_number], 0.03 * arc, true);
         boundRect[contour_number] = boundingRect(conPoints[contour_number]);
         if(debug) std::cout << "areas: " << area;
-        if(area >= 2000) // Ignore detected contours that may be small which means they are not bricks. since the brick area is around 3000
+        if(area >= 1000) // Ignore detected contours that may be small which means they are not bricks. since the brick area is around 3000
         {
             // drawing bounding rectangle on each object in the picture.
             // rectangle(*src, boundRect[contour_number].tl(), boundRect[contour_number].br(), colour, 1);
