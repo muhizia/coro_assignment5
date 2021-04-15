@@ -1835,7 +1835,7 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    // cv::Scalar(0, 228, 199), cv::Scalar(156, 239, 255)
    /* see http://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html#findcontours */
    /* and http://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html         */
-    findContours(canny_edge_image_copy, *contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_NONE);
+    findContours(canny_edge_image_copy, *contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
     cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);       // draw the contours on a black background
  
