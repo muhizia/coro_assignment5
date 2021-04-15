@@ -1845,8 +1845,8 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
 
 //   if (debug) printf("Number of contours %d: \n", contours.size());
 
-   imshow( "canny_window_name", src_threshold);
-   imshow( "contour_window_name", contours_image );
+   // imshow( "canny_window_name", src_threshold);
+   // imshow( "contour_window_name", contours_image );
    //  cv::waitKey(0);
 }
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)
