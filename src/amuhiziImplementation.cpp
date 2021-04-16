@@ -2014,13 +2014,13 @@ void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green,
 bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
 {
     if(pv1.color == "red" && pv2.color == "green")
-        return true;
+        return false;
     else if(pv1.color == "red" && pv2.color == "blue")
-        return true;
+        return false;
     else if(pv1.color == "green" && pv2.color == "blue")
-        return true;
+        return false;
     else
-        return  false;
+        return  true;
 }
 
 
