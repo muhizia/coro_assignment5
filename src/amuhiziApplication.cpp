@@ -291,10 +291,10 @@ int main(int argc, char ** argv) {
    if (debug) printf("Number of contours %lu: \n", contours.size());
    for(int index = 0; index < centers.size(); index++)
    {
+      getRGB(src_bgr, centers.at(index).x, centers.at(index).y, &red, &green, &blue);
       getAngle(arcLine_points.at(index), centers.at(index), &theta);
       drawCrossHairs(src, centers.at(index).x, centers.at(index).y, 10, 255, 255, 0, 1);
       drawArrowedLine(src, centers.at(index).x, centers.at(index).y, 90, - degToRad(theta), 255, 255, 0, 1);
-      getRGB(src_bgr, centers.at(index).x, centers.at(index).y, &red, &green, &blue);
       rgb2hsi(red, green, blue, &hue, &saturation, &intensity);
       hueCorrespColor(hue, &color);
       pic_vals.push_back({centers.at(index).x, centers.at(index).y, theta, color});
