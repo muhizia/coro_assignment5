@@ -270,7 +270,6 @@ int main(int argc, char ** argv) {
 
    camera.getImage(frame);
    imshow (scene_window_name, frame);
-   imwrite("/home/cram/workspace/ros/src/assignment4/data/test.jpg", frame);
    waitKey(3000);  // three second delay so that we can see the image before the window is destroyed.
           
    destroyWindow(scene_window_name);
@@ -352,6 +351,9 @@ int main(int argc, char ** argv) {
     for (int i = 0; i < NUM_BRICKS; i++) {
         pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
     }
-
+    camera.getImage(frame);
+    imwrite("/home/cram/workspace/ros/src/assignment5/data/test_new.jpg", frame);
+    imshow (scene_window_name, frame);
+    cv::waitKey(0);
    return 0;
 }
