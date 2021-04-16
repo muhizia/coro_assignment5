@@ -354,7 +354,9 @@ int main(int argc, char ** argv) {
    pick_and_place(bricks_pose[2][0], bricks_pose[2][1], bricks_pose[2][2], bricks_pose[2][3], -60, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
 
     camera.getImage(frame);
-    imwrite("/home/cram/workspace/ros/src/assignment5/data/test_new.jpg", frame);
+    T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
+    if (move(T5) == false) display_error_and_exit("move error ... quitting\n");
+    wait(3000);
     imshow (scene_window_name, frame);
     cv::waitKey(0);
    return 0;
