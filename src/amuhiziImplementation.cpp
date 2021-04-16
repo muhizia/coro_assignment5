@@ -2032,7 +2032,7 @@ void pick_and_place(float object_x, float object_y, float object_z, float object
 
     float effector_length = (float) robotConfigurationData.effector_z; // initialized from robot configuration data
     float initial_approach_distance = 30;
-    float final_depart_distance     = 20;
+    float final_depart_distance     = 30;
     float delta = 2;
 
     float approach_distance;
