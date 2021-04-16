@@ -345,11 +345,11 @@ int main(int argc, char ** argv) {
    
     float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
     for (int i = 0; i < NUM_BRICKS; i++){
-        bricks_dest_z[i] = destination_z + i*12.4; // all bricks have a height of 11.4 mm
+        bricks_dest_z[i] = destination_z + i*11.4; // all bricks have a height of 11.4 mm
     }
    /* Call the utility function to pick and place the spawned bricks */
     for (int i = 0; i < NUM_BRICKS; i++) {
-        pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
+        pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, bricks_dest_z[i], 180);
     }
 
     T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
