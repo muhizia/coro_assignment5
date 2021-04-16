@@ -327,7 +327,7 @@ int main(int argc, char ** argv) {
       // pic.y = world_sample_point.y;
       // pic.z = world_sample_point.z;
       // pic.theta = pic.theta;
-      std::cout<< pic.color << std::endl;
+      std::cout<< pic.color << std::endl ;
       printf("location %d = %f %f %f %f\n", k+1, world_sample_point.x, world_sample_point.y, world_sample_point.z, pic.theta);
       
       /* Call the utility function to pick and place the spawned bricks */
