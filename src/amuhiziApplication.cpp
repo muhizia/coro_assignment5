@@ -323,11 +323,13 @@ int main(int argc, char ** argv) {
    for (auto pic : pic_vals){
       if (debug) printf("( %3d, %3d, %3d)", pic.x, pic.y, pic.theta);
       inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
-      pic.x = world_sample_point.x;
-      pic.y = world_sample_point.y;
-      pic.z = world_sample_point.z;
+      // pic.x = world_sample_point.x;
+      // pic.y = world_sample_point.y;
+      // pic.z = world_sample_point.z;
       // pic.theta = pic.theta;
       printf("location %d = %f %f %f %f\n", k+1, world_sample_point.x, world_sample_point.y, world_sample_point.z, pic.theta);
+      
+      /* Call the utility function to pick and place the spawned bricks */
       pick_and_place(world_sample_point.x, world_sample_point.y, world_sample_point.z, pic.theta, destination_x, destination_y, bricks_dest_z[k], destination_phi, 0, 0, 5, 180);
       k = k + 1;
    }
@@ -346,10 +348,7 @@ int main(int argc, char ** argv) {
 
  
    /* Call the utility function to pick and place the spawned bricks */
-    for (int i = 0; i < NUM_BRICKS; i++) {
-        
-    }
-
+   
     T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
     move(T5);
     wait(3000);
