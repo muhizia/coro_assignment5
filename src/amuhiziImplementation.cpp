@@ -1820,9 +1820,10 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    std::vector<cv::Vec4i> hierarchy;
    cv::Mat thresholdedImage;
 
-   filter_size = gaussian_std_dev * 4 + 1;  // multiplier must be even to ensure an odd filter size as required by OpenCV
-                                            // this places an upper limit on gaussian_std_dev of 7 to ensure the filter size < 31
-                                            // which is the maximum size for the Laplacian operator
+   filter_size = gaussian_std_dev * 4 + 1;  
+   // multiplier must be even to ensure an odd filter size as required by OpenCV
+   // this places an upper limit on gaussian_std_dev of 7 to ensure the filter size < 31
+   // which is the maximum size for the Laplacian operator
    cvtColor(src, src_hue, cv::COLOR_BGR2HSV);
 
    // GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), gaussian_std_dev);
@@ -1849,6 +1850,9 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    // imshow( "contour_window_name", contours_image );
    //  cv::waitKey(0);
 }
+/**
+ * Contour extraction using thresholding
+*/
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)
 {
     cv::Mat src_gray;
@@ -1990,18 +1994,24 @@ void getAngle(cv::Point point, cv::Point center, int *thetha)
     rad = abs(atan2(deltaY, deltaX));
     radToDeg(rad, thetha);
 }
+/**
+ * getting color corresponding to hue
+*/
 void hueCorrespColor(float hue, std::string *color)
 {
-    // 255 - 10
-    // 225 - 255
-    // 81 - 140
+    // red 255 - 10
+    // blue 225 - 255
+    // green 81 - 140
     if((hue >= 255 && hue <= 360) || (hue <= 10)) *color = "red";
     else if(hue >= 225 && hue < 255) *color = "blue";
     else if(hue >= 81 && hue < 140) *color = "green";
     else *color = "other";
 }
+/**
+ * get color from a point in the image
+*/
 void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green, unsigned char *blue) {
-    bool debug = true;
+    bool debug = false;
     cv::Vec3b color = img.at<cv::Vec3b>(cv::Point(x,y));
     *red   = color[2];
     *green = color[1];
@@ -2011,6 +2021,9 @@ void getRGB(cv::Mat img, int x, int y, unsigned char *red, unsigned char *green,
         printf("RGB( %d, %d, %d ) \n", (int) color[2], (int) color[1], (int) color[0]);
     }
 }
+/**
+ * comparing color according the small hue.
+*/
 bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
 {
     if(pv1.color == "red" && pv2.color == "green")
@@ -2023,7 +2036,11 @@ bool smallHue(PIC_VALUES pv1, PIC_VALUES pv2)
         return  true;
 }
 
-
+/**
+ * edited Pick and place from the Prof. David Vernon and Vinny Adjibi.
+ * initial_approach_distance was 20 now changed to 30
+ * final_depart_distance  was 20 now changed to 30
+*/
 void pick_and_place(float object_x, float object_y, float object_z, float object_phi, 
                     float destination_x, float destination_y, float destination_z, float destination_phi,
                     float grasp_x, float grasp_y, float grasp_z, float grasp_theta) {
