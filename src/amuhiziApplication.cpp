@@ -355,7 +355,7 @@ int main(int argc, char ** argv) {
 
     camera.getImage(frame);
     T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
-    if (move(T5) == false) display_error_and_exit("move error ... quitting\n");
+    move(T5);
     wait(3000);
     imshow (scene_window_name, frame);
     cv::waitKey(0);
