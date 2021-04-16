@@ -305,26 +305,34 @@ int main(int argc, char ** argv) {
     const int NUM_BRICKS = 3;           // we have 3 bricks. this parameter should perhaps be read from the input file?
                                         // name and colors arrays should be of size NUM_BRICKS
 
-   float bricks_pose[NUM_BRICKS][4];   // read and store the bricks poses in an array
 
 
+   /* get the destination pose data */
+   /* ----------------------------- */
 
+    
+   if (debug) printf("Destination pose %f %f %f %f\n", destination_x, destination_y, destination_z, destination_phi);
+   
+   float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
+   for (int i = 0; i < NUM_BRICKS; i++){
+      bricks_dest_z[i] = destination_z + i*11.4; // all bricks have a height of 11.4 mm
+   }
    sort(pic_vals.begin(), pic_vals.end(), smallHue);
    int k = 0;
    cv::Point3f world_sample_point;
    for (auto pic : pic_vals){
       if (debug) printf("( %3d, %3d, %3d)", pic.x, pic.y, pic.theta);
       inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
-      bricks_pose[k][0] = world_sample_point.x;
-      bricks_pose[k][1] = world_sample_point.y;
-      bricks_pose[k][2] = world_sample_point.z;
-      bricks_pose[k][3] = pic.theta;
-      printf("location %d = %f %f %f %f\n", k+1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
+      pic.x = world_sample_point.x;
+      pic.y = world_sample_point.y;
+      pic.z = world_sample_point.z;
+      // pic.theta = pic.theta;
+      printf("location %d = %f %f %f %f\n", k+1, world_sample_point.x, world_sample_point.y, world_sample_point.z, pic.theta);
+      pick_and_place(world_sample_point.x, world_sample_point.y, world_sample_point.z, pic.theta, destination_x, destination_y, bricks_dest_z[k], destination_phi, 0, 0, 5, 180);
       k = k + 1;
-      
    }
-   printf("\n");
    pic_vals.clear();
+   printf("\n");
    // imshow( "Src", src);
    if(centers.size() != 0) centers.clear();
    if(arcLine_points.size() != 0) arcLine_points.clear();
@@ -337,19 +345,9 @@ int main(int argc, char ** argv) {
    /* insert your code here */
 
  
-    /* get the destination pose data */
-    /* ----------------------------- */
-
-    
-    if (debug) printf("Destination pose %f %f %f %f\n", destination_x, destination_y, destination_z, destination_phi);
-   
-    float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
-    for (int i = 0; i < NUM_BRICKS; i++){
-        bricks_dest_z[i] = destination_z + i*11.4; // all bricks have a height of 11.4 mm
-    }
    /* Call the utility function to pick and place the spawned bricks */
     for (int i = 0; i < NUM_BRICKS; i++) {
-        pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
+        
     }
 
     T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
