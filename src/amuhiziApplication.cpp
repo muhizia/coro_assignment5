@@ -270,6 +270,7 @@ int main(int argc, char ** argv) {
 
    camera.getImage(frame);
    imshow (scene_window_name, frame);
+   imwrite("/home/cram/workspace/ros/src/assignment4/data/test.jpg", save_img);
    waitKey(3000);  // three second delay so that we can see the image before the window is destroyed.
           
    destroyWindow(scene_window_name);

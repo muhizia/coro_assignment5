@@ -1807,7 +1807,7 @@ void rgb2hsi(unsigned char red, unsigned char green, unsigned char blue, float *
  * 
 */
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours) {
-   cv::Mat src_gray, src_blur, detected_edges, src_threshold;
+   cv::Mat src_hue, src_blur, detected_edges, src_threshold;
    int cannyThreshold = 10;
    char* canny_window_name;
    char* contour_window_name;
@@ -1817,25 +1817,24 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    int ratio = 5;
    int kernel_size = 3;
    int filter_size;
-//   std::vector <std::vector<cv::Point> > contours;
-    std::vector<cv::Vec4i> hierarchy;
+   std::vector<cv::Vec4i> hierarchy;
    cv::Mat thresholdedImage;
 
    filter_size = gaussian_std_dev * 4 + 1;  // multiplier must be even to ensure an odd filter size as required by OpenCV
                                             // this places an upper limit on gaussian_std_dev of 7 to ensure the filter size < 31
                                             // which is the maximum size for the Laplacian operator
-   cvtColor(src, src_gray, CV_BGR2GRAY);
+   cvtColor(src, src_hue, cv::COLOR_BGR2HSV);
 
-   GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), gaussian_std_dev);
+   // GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), gaussian_std_dev);
 
-   Canny( src_blur, detected_edges, cannyThreshold, cannyThreshold*ratio, kernel_size );
+   // Canny( src_blur, detected_edges, cannyThreshold, cannyThreshold*ratio, kernel_size );
 
-   cv::Mat canny_edge_image_copy = detected_edges.clone();   // clone the edge image because findContours overwrites it
-   // inRange(src_hue, cv::Scalar(0, 206, 235), cv::Scalar(126, 241, 255), src_threshold);
+   // cv::Mat canny_edge_image_copy = detected_edges.clone();   // clone the edge image because findContours overwrites it
+   inRange(src_hue, cv::Scalar(0, 206, 235), cv::Scalar(126, 241, 255), src_threshold);
    // cv::Scalar(0, 228, 199), cv::Scalar(156, 239, 255)
    /* see http://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html#findcontours */
    /* and http://docs.opencv.org/2.4/doc/tutorials/imgproc/shapedescriptors/find_contours/find_contours.html         */
-    findContours(canny_edge_image_copy, *contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    findContours(src_threshold,*contours,hierarchy,CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
     cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);       // draw the contours on a black background
  
