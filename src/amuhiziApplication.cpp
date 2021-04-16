@@ -352,10 +352,10 @@ int main(int argc, char ** argv) {
         pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
     }
 
-    camera.getImage(frame);
     T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
     move(T5);
     wait(3000);
+    camera.getImage(frame);
     imshow (scene_window_name, frame);
     cv::waitKey(0);
    return 0;
