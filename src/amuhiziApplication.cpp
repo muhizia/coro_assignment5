@@ -345,7 +345,7 @@ int main(int argc, char ** argv) {
    
     float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
     for (int i = 0; i < NUM_BRICKS; i++){
-        bricks_dest_z[i] = destination_z + i*11.4; // all bricks have a height of 11.4 mm
+        bricks_dest_z[i] = destination_z + i*12.4; // all bricks have a height of 11.4 mm
     }
    /* Call the utility function to pick and place the spawned bricks */
     for (int i = 0; i < NUM_BRICKS; i++) {
