@@ -293,7 +293,7 @@ int main(int argc, char **argv)
    camera.getImage(frame);
    imshow(scene_window_name, frame);
    waitKey(3000); // three second delay so that we can see the image before the window is destroyed.
-   imwrite("/workspace/ros/src/assignment5/data/cameraTest.jpg", frame);
+   imwrite("/home/cram/workspace/ros/src/assignment5/data/cameraTest.jpg", frame);
    destroyWindow(scene_window_name);
 
    /* analyze the image to determine the pose of the three bricks in the world or robot frame of reference */
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
    std::vector<PIC_VALUES> pic_vals;
    src = frame;     // cv::imread(path + endString.at(0));
    src_bgr = frame; // cv::imread(path + endString.at(0));
-   ContourExtraction(src, &contours);
+   ContourExtraction(src, &contours, 150);
    getCenter(&src, contours, &centers, &arcLine_points);
    std::string color;
    if (debug)
