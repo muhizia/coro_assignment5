@@ -14,8 +14,17 @@
 * 
 *   All poses – T5, gripper, and bricks – are specified in a Cartesian frame of reference using frames (i.e. homogenous transformations).
 *
+*   Sample Input
+*   ------------
+*   robot_3_config.txt
+*   cameraModelCoefficients.txt
+*   0 220 0 0
+*
 *   David Vernon
 *   5 April 2021
+*
+*   Aristide Muhizi
+*   16 April 2021
 *
 *   Audit Trail
 *   -----------
@@ -23,46 +32,53 @@
 *   and pose estimation in 3D using the inverse perspective transformation
 *   David Vernon 8 April 2021
 *
+*   Possible Tests
+*   ---------------
+*   Changing different angles of the source brick
+*   Changing different angles of the destination brick
+*   put the destination in middle where the end effector will grab another brick.
+* 
+*
 *******************************************************************************************************************/
 
 #include <stdlib.h>
 #include <time.h>
 #ifdef WIN32
-    #include "amuhizi.h"
+#include "amuhizi.h"
 #else
-    #include <assignment5/amuhizi.h>
+#include <assignment5/amuhizi.h>
 #endif
 
-
-int main(int argc, char ** argv) {
+int main(int argc, char **argv)
+{
 
    /* initialize the ROS node  */
    /* ------------------------ */
 
    /* we do this first in case one of the classes creates a node handle when the object is instantiated */
 
-   #ifdef ROS
-       ros::init(argc, argv, "amuhizi"); // Initialize the ROS system
-   #endif
+#ifdef ROS
+   ros::init(argc, argv, "amuhizi"); // Initialize the ROS system
+#endif
 
    /* now come the declarations */
 
    extern robotConfigurationDataType robotConfigurationData;
-   
+
    bool debug = true;
-   
-   FILE *fp_in;                    // assignment 5 input file
-   FILE *fp_camera_model;          // camera model file
-   int  end_of_file; 
+
+   FILE *fp_in;           // assignment 5 input file
+   FILE *fp_camera_model; // camera model file
+   int end_of_file;
    char robot_configuration_filename[MAX_FILENAME_LENGTH];
    char camera_model_filename[MAX_FILENAME_LENGTH] = {};
    char filename[MAX_FILENAME_LENGTH] = {};
    char directory[MAX_FILENAME_LENGTH] = {};
 
-   const char* scene_window_name  = "Simulator Image";
+   const char *scene_window_name = "Simulator Image";
 
    /* Frame objects */
-   
+
    Frame brick1;
    Frame brick2;
    Frame brick3;
@@ -96,30 +112,28 @@ int main(int argc, char ** argv) {
    float camera_model[3][4];
 
    /* data variables */
-      
-   float destination_x;                    
+
+   float destination_x;
    float destination_y;
    float destination_z;
    float destination_phi;
 
    float brick_height = 11;
-   
-   bool continuous_path = false;    // if true, implement approximation of continuous path control
-                                    // when approaching and departing the grasp pose
-                                    // otherwise just move directly from the initial approach pose to the grasp pose
-                                    // and directly from the grasp pose to the final depart pose
-   
-   int number_of_bricks = 0;        // number of brick detected in the scene
+
+   bool continuous_path = false; // if true, implement approximation of continuous path control
+                                 // when approaching and departing the grasp pose
+                                 // otherwise just move directly from the initial approach pose to the grasp pose
+                                 // and directly from the grasp pose to the final depart pose
+
+   int number_of_bricks = 0; // number of brick detected in the scene
 
    int i, j;
 
-
-   
    /* open the input file */
    /* ------------------- */
 
    /* Set the filename; different directories for ROS and Windows versions */
-   
+
 #ifdef ROS
    strcat(directory, (ros::package::getPath(ROS_PACKAGE_NAME) + "/data/").c_str());
 #else
@@ -129,98 +143,105 @@ int main(int argc, char ** argv) {
    strcpy(filename, directory);
    strcat(filename, "assignment5Input.txt"); // Input filename matches the application name
 
-   if ((fp_in = fopen(filename, "r")) == 0) {
-      printf("Error can't open input %s\n",filename);
+   if ((fp_in = fopen(filename, "r")) == 0)
+   {
+      printf("Error can't open input %s\n", filename);
       prompt_and_exit(0);
    }
 
-   
    /* get the robot configuration data */
    /* -------------------------------- */
 
-   end_of_file = fscanf(fp_in, "%s", filename); // read the configuration filename   
+   end_of_file = fscanf(fp_in, "%s", filename); // read the configuration filename
 
-   if (end_of_file == EOF) {   
-     printf("Fatal error: unable to read the robot configuration filename %s\n",filename);
+   if (end_of_file == EOF)
+   {
+      printf("Fatal error: unable to read the robot configuration filename %s\n", filename);
       prompt_and_exit(1);
    }
 
-   if (debug) printf("Robot configuration filename %s\n", filename);
+   if (debug)
+      printf("Robot configuration filename %s\n", filename);
 
    strcpy(robot_configuration_filename, directory);
    strcat(robot_configuration_filename, filename);
 
    readRobotConfigurationData(robot_configuration_filename); // there is a dedicated function to read the configuration data
                                                              // and store it in a global structure
-                                                            
-   
+
    /* get the camera model data  */
    /* -------------------------- */
 
-   end_of_file = fscanf(fp_in, "%s", filename); // read the configuration filename   
+   end_of_file = fscanf(fp_in, "%s", filename); // read the configuration filename
 
-   if (end_of_file == EOF) {   
+   if (end_of_file == EOF)
+   {
       printf("Fatal error: unable to read the camera model filename, %s\n", filename);
       prompt_and_exit(1);
    }
 
-   if (debug) printf("Camera model filename %s\n", filename);
+   if (debug)
+      printf("Camera model filename %s\n", filename);
 
    strcpy(camera_model_filename, directory);
    strcat(camera_model_filename, filename);
 
-   if ((fp_camera_model = fopen(camera_model_filename, "r")) == 0) {
-      printf("Error can't open input %s\n",camera_model_filename);
+   if ((fp_camera_model = fopen(camera_model_filename, "r")) == 0)
+   {
+      printf("Error can't open input %s\n", camera_model_filename);
       prompt_and_exit(0);
    }
 
-   for (i=0; i<3; i++) {
-      for (j=0; j<4; j++) {
+   for (i = 0; i < 3; i++)
+   {
+      for (j = 0; j < 4; j++)
+      {
          fscanf(fp_camera_model, "%f ", &(camera_model[i][j]));
       }
    }
 
-   if (debug) {
+   if (debug)
+   {
       printf("Camera model\n");
-      for (i=0; i<3; i++) {
-         for (j=0; j<4; j++) {
+      for (i = 0; i < 3; i++)
+      {
+         for (j = 0; j < 4; j++)
+         {
             printf("%6.3f ", camera_model[i][j]);
          }
-	 printf("\n");
+         printf("\n");
       }
       printf("\n");
    }
 
-   fclose(fp_camera_model);  
+   fclose(fp_camera_model);
 
-   
    /* get the destination pose data */
    /* ----------------------------- */
 
    end_of_file = fscanf(fp_in, "%f %f %f %f", &destination_x, &destination_y, &destination_z, &destination_phi);
 
-   if (end_of_file == EOF) {   
-	  printf("Fatal error: unable to read the destination position and orientation\n");
+   if (end_of_file == EOF)
+   {
+      printf("Fatal error: unable to read the destination position and orientation\n");
       prompt_and_exit(1);
    }
-   
-   if (debug) printf("Destination pose %6.3f %6.3f %6.3f %6.3f\n", destination_x, destination_y, destination_z, destination_phi);
+
+   if (debug)
+      printf("Destination pose %6.3f %6.3f %6.3f %6.3f\n", destination_x, destination_y, destination_z, destination_phi);
 
    /* done reading the input file so close it */
-   
+
    fclose(fp_in);
 
-
-      
    /* now start the pick and place task */
    /* --------------------------------- */
 
+   E = trans((float)robotConfigurationData.effector_x,  // end-effector (gripper) frame
+             (float)robotConfigurationData.effector_y,  // is initialized from data
+             (float)robotConfigurationData.effector_z); // in the robot configuration file
 
-   E    = trans((float) robotConfigurationData.effector_x,       // end-effector (gripper) frame
-		(float) robotConfigurationData.effector_y,       // is initialized from data
-		(float) robotConfigurationData.effector_z);      // in the robot configuration file
-   
-   Z    = trans(0.0, 0.0, 0.0);                                  // robot base frame
+   Z = trans(0.0, 0.0, 0.0); // robot base frame
 
    /* move to the home pose                                                   */
    /*                                                                         */
@@ -229,12 +250,13 @@ int main(int argc, char ** argv) {
    /* with the approach vector directed along the world  Y axis               */
    /* and the orientation vector directed aloing the the X axis               */
    /* thus, the normal vector is directed in the - Z direction                */
-   
-   home = trans(0, 187, 216) *  roty(90.0) * rotx(-90);
-   
-   T5   = inv(Z) * home; // no need to include inv(E) here since we are specifying the wrist pose directly
 
-   if (move(T5) == false) display_error_and_exit("move error ... quitting\n");
+   home = trans(0, 187, 216) * roty(90.0) * rotx(-90);
+
+   T5 = inv(Z) * home; // no need to include inv(E) here since we are specifying the wrist pose directly
+
+   if (move(T5) == false)
+      display_error_and_exit("move error ... quitting\n");
 
    wait(3000);
 
@@ -245,18 +267,18 @@ int main(int argc, char ** argv) {
    /* with the approach vector directed along the world  -Z axis                     */
    /* and the orientation vector directed in the  with the -Y axis                   */
    /* thus, the normal vector is directed in the - X direction                       */
-   
+
    out_of_view = trans(187, 0, 216) * roty(180.0);
 
-   T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
+   T5 = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
 
-   if (move(T5) == false) display_error_and_exit("move error ... quitting\n");
+   if (move(T5) == false)
+      display_error_and_exit("move error ... quitting\n");
 
    wait(3000);
 
-
    /* create a window to see the acquired image */
-   
+
    namedWindow(scene_window_name, CV_WINDOW_AUTOSIZE);
    waitKey(30);
    moveWindow(scene_window_name, 0, 0);
@@ -265,96 +287,96 @@ int main(int argc, char ** argv) {
    /* initialize the camera */
 
    camera.initialize();
-   
+
    /* acquire an image */
 
    camera.getImage(frame);
-   imshow (scene_window_name, frame);
-   waitKey(3000);  // three second delay so that we can see the image before the window is destroyed.
-          
+   imshow(scene_window_name, frame);
+   waitKey(3000); // three second delay so that we can see the image before the window is destroyed.
+
    destroyWindow(scene_window_name);
 
-   
    /* analyze the image to determine the pose of the three bricks in the world or robot frame of reference */
    /* sort the poses by increasing value of  hue                                                           */
    /* ---------------------------------------------------------------------------------------------------- */
 
-   
    /* insert your code here */
 
    std::vector<PIC_VALUES> pic_vals;
-   src = frame; // cv::imread(path + endString.at(0));
+   src = frame;     // cv::imread(path + endString.at(0));
    src_bgr = frame; // cv::imread(path + endString.at(0));
    ContourExtraction(src, &contours);
    getCenter(&src, contours, &centers, &arcLine_points);
    std::string color;
-   if (debug) printf("Number of contours %lu: \n", contours.size());
-   for(int index = 0; index < centers.size(); index++)
+   if (debug)
+      printf("Number of contours %lu: \n", contours.size());
+   for (int index = 0; index < centers.size(); index++)
    {
       getRGB(src_bgr, centers.at(index).x, centers.at(index).y, &red, &green, &blue);
       getAngle(arcLine_points.at(index), centers.at(index), &theta);
       drawCrossHairs(src, centers.at(index).x, centers.at(index).y, 10, 255, 255, 0, 1);
-      drawArrowedLine(src, centers.at(index).x, centers.at(index).y, 90, - degToRad(theta), 255, 255, 0, 1);
+      drawArrowedLine(src, centers.at(index).x, centers.at(index).y, 90, -degToRad(theta), 255, 255, 0, 1);
       rgb2hsi(red, green, blue, &hue, &saturation, &intensity);
       hueCorrespColor(hue, &color);
       pic_vals.push_back({centers.at(index).x, centers.at(index).y, theta, color});
    }
 
-    /* get the object pose data */
-    /* ------------------------ */
-    const int NUM_BRICKS = 3;           // we have 3 bricks. this parameter should perhaps be read from the input file?
-                                        // name and colors arrays should be of size NUM_BRICKS
+   /* get the object pose data */
+   /* ------------------------ */
+   const int NUM_BRICKS = 3; // we have 3 bricks. this parameter should perhaps be read from the input file?
+                             // name and colors arrays should be of size NUM_BRICKS
 
-   float bricks_pose[NUM_BRICKS][4];   // read and store the bricks poses in an array
-
-
+   float bricks_pose[NUM_BRICKS][4]; // read and store the bricks poses in an array
 
    sort(pic_vals.begin(), pic_vals.end(), smallHue);
    int k = 0;
    cv::Point3f world_sample_point;
-   for (auto pic : pic_vals){
-      if (debug) printf("( %3d, %3d, %3d)", pic.x, pic.y, pic.theta);
+   for (auto pic : pic_vals)
+   {
+      if (debug)
+         printf("( %3d, %3d, %3d)", pic.x, pic.y, pic.theta);
       inversePerspectiveTransformation(Point(pic.x, pic.y), camera_model, 0.00, &world_sample_point);
       bricks_pose[k][0] = world_sample_point.x;
       bricks_pose[k][1] = world_sample_point.y;
       bricks_pose[k][2] = world_sample_point.z;
       bricks_pose[k][3] = pic.theta;
-      printf("location %d = %f %f %f %f\n", k+1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
+      printf("location %d = %f %f %f %f\n", k + 1, bricks_pose[k][0], bricks_pose[k][1], bricks_pose[k][2], bricks_pose[k][3]);
       k = k + 1;
-      
    }
    printf("\n");
    pic_vals.clear();
    // imshow( "Src", src);
-   if(centers.size() != 0) centers.clear();
-   if(arcLine_points.size() != 0) arcLine_points.clear();
+   if (centers.size() != 0)
+      centers.clear();
+   if (arcLine_points.size() != 0)
+      arcLine_points.clear();
    // cv::waitKey(0);
-   
+
    /* stack the bricks: red on top, green in the middle, and blue at the bottom  */
    /* -------------------------------------------------------------------------  */
 
-
    /* insert your code here */
 
- 
-    /* get the destination pose data */
-    /* ----------------------------- */
+   /* get the destination pose data */
+   /* ----------------------------- */
 
-    
-    if (debug) printf("Destination pose %f %f %f %f\n", destination_x, destination_y, destination_z, destination_phi);
-   
-    float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
-    for (int i = 0; i < NUM_BRICKS; i++){
-        bricks_dest_z[i] = destination_z + i*11.4; // all bricks have a height of 11.4 mm
-    }
+   if (debug)
+      printf("Destination pose %f %f %f %f\n", destination_x, destination_y, destination_z, destination_phi);
+
+   float bricks_dest_z[NUM_BRICKS]; // each bricks destination z coordinate will depend on its position in the stack given
+   for (int i = 0; i < NUM_BRICKS; i++)
+   {
+      bricks_dest_z[i] = destination_z + i * 11.4; // all bricks have a height of 11.4 mm
+   }
    /* Call the utility function to pick and place the spawned bricks */
-    for (int i = 0; i < NUM_BRICKS; i++) {
-        pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
-    }
+   for (int i = 0; i < NUM_BRICKS; i++)
+   {
+      pick_and_place(bricks_pose[i][0], bricks_pose[i][1], bricks_pose[i][2], bricks_pose[i][3], destination_x, destination_y, bricks_dest_z[i], destination_phi, 0, 0, 5, 180);
+   }
 
-    T5   = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
-    move(T5);
-    wait(3000);
+   T5 = inv(Z) * out_of_view; // no need to include inv(E) here since we are specifying the wrist pose directly
+   move(T5);
+   wait(3000);
    //  imshow (scene_window_name, frame);
    //  cv::waitKey(0);
    return 0;
