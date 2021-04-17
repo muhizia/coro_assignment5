@@ -1918,7 +1918,7 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
    // this places an upper limit on gaussian_std_dev of 7 to ensure the filter size < 31
    // which is the maximum size for the Laplacian operator
    cvtColor(src, src_hue, cv::COLOR_BGR2HSV);
-   inRange(src_hue, cv::Scalar(0, 228, 199), cv::Scalar(156, 239, 255), src_threshold);
+   inRange(src_hue, cv::Scalar(0, 206, 235), cv::Scalar(126, 241, 255), src_threshold);
    // cv::Scalar(0, 228, 199), cv::Scalar(156, 239, 255)
    // cv::Scalar(0, 206, 235), cv::Scalar(126, 241, 255)
    /* see http://docs.opencv.org/2.4/modules/imgproc/doc/structural_analysis_and_shape_descriptors.html#findcontours */
