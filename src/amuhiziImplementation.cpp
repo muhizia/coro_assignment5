@@ -1947,38 +1947,78 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
 */
 void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)
 {
-   cv::Mat src_gray;
-   cv::Mat src_blur;
-   cv::Mat detected_edges;
+    cv::Mat src_gray;
+    cv::Mat src_blur;
+    cv::Mat detected_edges;
+    cv::Mat src_dil;
+    
+    bool debug = false;
+    int ratio = 3;
+    int kernel_size = 3;
+    int filter_size;
 
-   bool debug = false;
-   int ratio = 3;
-   int kernel_size = 3;
-   int filter_size;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::Mat thresholdedImage;
+    filter_size = kernel_size * 4 + 1;
+    cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY) ;
+    // multiplier must be even to ensure an odd filter size as required by OpenCV
+    // this places an upper limit on gaussian_std dev of 7 to ensure the filter size < 31
+    // which is the maximum size for the Laplacian operator
+    GaussianBlur(src_gray, src_blur, cv::Size(filter_size,filter_size), kernel_size);
+    Canny(src_gray, detected_edges,thresholdValue, thresholdValue*ratio, kernel_size ) ;
+    
 
-   std::vector<cv::Vec4i> hierarchy;
-   cv::Mat thresholdedImage;
-   filter_size = kernel_size * 4 + 1;
-   cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
-   // multiplier must be even to ensure an odd filter size as required by OpenCV
-   // this places an upper limit on gaussian_std dev of 7 to ensure the filter size < 31
-   // which is the maximum size for the Laplacian operator
-   GaussianBlur(src_gray, src_blur, cv::Size(filter_size, filter_size), kernel_size);
-   Canny(src_gray, detected_edges, thresholdValue, thresholdValue * ratio, kernel_size);
+    cv::Mat canny_edge_image_copy = detected_edges.clone();
+    // clone the edge image because findContours overwrites it
+    /* see http://docs.opencv.org/2.4/modu1es/imgproc/doc/structura1 analysis and shape descriptors. html#findcontours */
+    /* and http://docs.opencv.org/2.4/doc/tutoria1s/imgproc/shapedescriptors/find contours/ find contours. html */
+    cv::Mat kernel = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    dilate(detected_edges, src_dil, kernel);
+    findContours (src_dil, *contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+    cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);
+    if(debug)
+    {
+        imshow("Gray", src_gray);
+        imshow("dilate", src_dil);
+        imshow("Image brur", src_blur);
+        imshow("Image canny_edge_image_copy", canny_edge_image_copy);
+        imshow("Image detected_edges", detected_edges);
+    }
+}
+// void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contours, int thresholdValue)
+// {
+//    cv::Mat src_gray;
+//    cv::Mat src_blur;
+//    cv::Mat detected_edges;
 
-   cv::Mat canny_edge_image_copy = detected_edges.clone();
-   // clone the edge image because findContours overwrites it
-   /* see http://docs.opencv.org/2.4/modu1es/imgproc/doc/structura1 analysis and shape descriptors. html#findcontours */
-   /* and http://docs.opencv.org/2.4/doc/tutoria1s/imgproc/shapedescriptors/find contours/ find contours. html */
-   cv::Mat kernel = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
-   findContours(canny_edge_image_copy, *contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-   cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);
-   if (debug)
-   {
-      //   imshow("Gray", src_gray);
-      //   imshow("Image brur", src_blur);
-      //   imshow("Image detected_edges", detected_edges);
-   }
+//    bool debug = false;
+//    int ratio = 3;
+//    int kernel_size = 3;
+//    int filter_size;
+
+//    std::vector<cv::Vec4i> hierarchy;
+//    cv::Mat thresholdedImage;
+//    filter_size = kernel_size * 4 + 1;
+//    cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
+//    // multiplier must be even to ensure an odd filter size as required by OpenCV
+//    // this places an upper limit on gaussian_std dev of 7 to ensure the filter size < 31
+//    // which is the maximum size for the Laplacian operator
+//    GaussianBlur(src_gray, src_blur, cv::Size(filter_size, filter_size), kernel_size);
+//    Canny(src_gray, detected_edges, thresholdValue, thresholdValue * ratio, kernel_size);
+
+//    cv::Mat canny_edge_image_copy = detected_edges.clone();
+//    // clone the edge image because findContours overwrites it
+//    /* see http://docs.opencv.org/2.4/modu1es/imgproc/doc/structura1 analysis and shape descriptors. html#findcontours */
+//    /* and http://docs.opencv.org/2.4/doc/tutoria1s/imgproc/shapedescriptors/find contours/ find contours. html */
+//    cv::Mat kernel = getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+//    findContours(canny_edge_image_copy, *contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+//    cv::Mat contours_image = cv::Mat::zeros(src.size(), CV_8UC3);
+//    if (debug)
+//    {
+//       //   imshow("Gray", src_gray);
+//       //   imshow("Image brur", src_blur);
+//       //   imshow("Image detected_edges", detected_edges);
+//    }
 }
 
 /**
