@@ -305,7 +305,7 @@ int main(int argc, char **argv)
    std::vector<PIC_VALUES> pic_vals;
    src = frame;     // cv::imread(path + endString.at(0));
    src_bgr = frame; // cv::imread(path + endString.at(0));
-   ContourExtraction(src, &contours, 150);
+   ContourExtraction(src, &contours, 180);
    getCenter(&src, contours, &centers, &arcLine_points);
    std::string color;
    if (debug)
