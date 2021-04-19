@@ -2019,7 +2019,7 @@ void ContourExtraction(cv::Mat src, std::vector<std::vector<cv::Point>> *contour
 //       //   imshow("Image brur", src_blur);
 //       //   imshow("Image detected_edges", detected_edges);
 //    }
-}
+// }
 
 /**
  * Calculating distance between two points using two x,y coordinates.
