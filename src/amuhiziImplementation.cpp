@@ -2113,7 +2113,7 @@ void radToDeg(float rad, int *deg) // converting from radian to degree
    *deg = rad * (180.0 / 3.14);
    if((*deg <= 182 && *deg >=178) || *deg == 360)
       *deg = 0;
-   if(*deg>90) *deg = 180 - *deg;
+   if(*deg>90) *deg = *deg - 180;
 }
 /**
  *  converting from degree to radian
