@@ -2111,7 +2111,7 @@ void getCenter(cv::Mat *src, std::vector<std::vector<cv::Point>> contours, std::
 void radToDeg(float rad, int *deg) // converting from radian to degree
 {
    *deg = rad * (180.0 / 3.14);
-   if (*deg == 180 || *deg == 360)
+   if((*deg <= 182 && *deg >=178) || *deg == 360)
       *deg = 0;
 }
 /**
