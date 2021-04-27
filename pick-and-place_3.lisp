@@ -137,7 +137,12 @@
     ;                 (type moving-torso) 
     ;                 (joint-angle 0.3)))
     ;     (park-arms))
-    (find-object-with-base-movement)))
+    (find-object-with-base-movement)
+    (perform (a motion
+                    (type moving-torso) 
+                    (joint-angle 0.3)))
+    (park-arms))
+    )
 
 ; find-object
 (defun find-object-with-base-movement ()
@@ -174,10 +179,6 @@
       ;; If everything else fails, error out
       ;; Reset the neck before erroring out     
       (cpl:fail 'object-nowhere-to-be-found))
-      (perform (a motion
-                    (type moving-torso) 
-                    (joint-angle 0.3)))
-        (park-arms)
       ))
 
     (defun perceive-bottle()
